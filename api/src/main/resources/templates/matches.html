@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Upload Matches</title>
+</head>
+<body>
+<h1>Upload Matches</h1>
+
+<form action="/matches/upload" method="get">
+    <label for="dateFormat">Select Date Format:</label>
+    <select name="dateFormat" id="dateFormat">
+        <option value="dd-mm-yyyy">dd-mm-yyyy</option>
+        <option value="mm-dd-yyyy">mm-dd-yyyy</option>
+        <option value="yyyy-mm-dd">yyyy-mm-dd</option>
+        <option value="yyyy-dd-mm">yyyy-dd-mm</option>
+    </select>
+
+    <label for="date">Date:</label>
+    <input type="text" id="date" name="date" placeholder="Enter date">
+
+    <button type="submit">Upload</button>
+</form>
+
+<div>
+    <h2>Warnings:</h2>
+    <ul>
+        <li th:each="warning : ${warnings}" th:text="${warning}"></li>
+    </ul>
+</div>
+
+<h1>Matches List</h1>
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>ATeamID</th>
+        <th>BTeamID</th>
+        <th>Date</th>
+        <th>Score</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="match : ${matches}">
+        <td th:text="${match.id}">ID</td>
+        <td th:text="${match.ATeamID.id}">A Team ID</td>
+        <td th:text="${match.BTeamID.id}">B Team ID</td>
+        <td th:text="${match.date}">Date</td>
+        <td th:text="${match.score}">Score</td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>
