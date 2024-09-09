@@ -1,0 +1,97 @@
+package com.academy.longestplayingpairs.api.service;
+
+import com.academy.longestplayingpairs.api.model.Match;
+import com.academy.longestplayingpairs.api.model.Player;
+import com.academy.longestplayingpairs.api.model.Record;
+import com.academy.longestplayingpairs.api.repository.MatchesRepository;
+import com.academy.longestplayingpairs.api.repository.PlayersRepository;
+import com.academy.longestplayingpairs.api.repository.RecordsRepository;
+import org.springframework.stereotype.Service;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+@Service
+public class RecordsCSVService {
+
+    RecordsRepository recordsRepository;
+    PlayersRepository playersRepository;
+    MatchesRepository matchesRepository;
+
+    private final String PATH_RECORDS = "api/src/main/resources/upload-dir/records.csv";
+
+    public RecordsCSVService(RecordsRepository recordsRepository, PlayersRepository playersRepository, MatchesRepository matchesRepository) {
+        this.recordsRepository = recordsRepository;
+        this.playersRepository = playersRepository;
+        this.matchesRepository = matchesRepository;
+    }
+
+    public List<String> csvParse() {
+        List<String> warnings = new ArrayList<>();
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(PATH_RECORDS))) {
+            Pattern pattern = Pattern.compile("^(?<id>([1-9][0-9]{0,3}))\\s*[,;-]\\s*(?<playerid>([1-9][0-9]{0,3}))\\s*[,;-]\\s*(?<matchid>([1-9][0-9]{0,1}))\\s*[,;-]\\s*(?<frommin>([0-9]|[1-8][0-9]|90))\\s*[,;-]\\s*(?<tomin>([1-9]|[1-8][0-9]|90|(?i)null))\\s*$");
+
+            int lineNum = 0;
+            String line;
+            while ((line = reader.readLine()) != null) {
+                ++lineNum;
+
+                if (lineNum == 1) {
+                    continue;
+                }
+
+                Matcher matcher = pattern.matcher(line);
+                boolean matchFound = matcher.find();
+
+                if (matchFound) {
+                    int id = Integer.parseInt(matcher.group("id"));
+
+                    if (recordsRepository.existsById(id)) {
+                        warnings.add("Entity already exists in the table. Row" + lineNum);
+                    } else {
+                        int fromMin = Integer.parseInt(matcher.group("frommin"));
+                        int toMin;
+                        if (matcher.group("tomin").equalsIgnoreCase("null")) {
+                            toMin = 90;
+                        } else {
+                            toMin = Integer.parseInt(matcher.group("tomin"));
+                        }
+
+                        if (fromMin > toMin) {
+                            warnings.add("FromMinute cannot be bigger than ToMinute on line " + lineNum);
+                            continue;
+                        }
+
+                        int playerId = Integer.parseInt(matcher.group("playerid"));
+                        Player player = playersRepository.findById(playerId).orElse(null);
+
+                        int matchId = Integer.parseInt(matcher.group("matchid"));
+                        Match match = matchesRepository.findById(matchId).orElse(null);
+
+                        Record record = new Record();
+
+                        record.setId(id);
+                        record.setFromMinute(fromMin);
+                        record.setToMinute(toMin);
+
+                        if (player != null && match != null) {
+                            record.setPlayer(player);
+                            record.setMatch(match);
+                        }
+
+                        recordsRepository.save(record);
+                    }
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return warnings;
+    }
+}
