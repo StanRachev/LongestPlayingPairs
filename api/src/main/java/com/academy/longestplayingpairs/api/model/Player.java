@@ -16,6 +16,7 @@ public class Player {
 
     @Id
     @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     @NotNull
     @Column(name = "team_number")

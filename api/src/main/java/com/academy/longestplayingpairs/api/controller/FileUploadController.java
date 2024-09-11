@@ -1,6 +1,6 @@
 package com.academy.longestplayingpairs.api.controller;
 
-import com.academy.longestplayingpairs.api.service.StorageService;
+import com.academy.longestplayingpairs.api.service.interfaces.StorageService;
 import com.academy.longestplayingpairs.api.service.storageUtils.StorageFileNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;

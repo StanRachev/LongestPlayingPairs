@@ -6,6 +6,7 @@ import com.academy.longestplayingpairs.api.repository.TeamsRepository;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -18,7 +19,8 @@ public class TeamsCSVService {
 
     TeamsRepository teamsRepository;
 
-    private final String PATH_TEAMS = "api/src/main/resources/upload-dir/teams.csv";
+//    private final String PATH_TEAMS = "api/src/main/resources/upload-dir/teams.csv";
+    private final String PATH_TEAMS = "api/src/main/resources/test/teams.csv";
 
     public TeamsCSVService(TeamsRepository teamsRepository) {
         this.teamsRepository = teamsRepository;
@@ -28,7 +30,7 @@ public class TeamsCSVService {
         List<String> warnings = new ArrayList<>();
 
         try (BufferedReader reader = new BufferedReader(new FileReader(PATH_TEAMS))) {
-            Pattern pattern = Pattern.compile("(?<id>\\d+)\\s*[,;-]\\s*(?<name>([A-Z][a-z]+\\s+){0,2}[A-Z][a-z]+)\\s*[,;-]\\s*(?<manager>(([\\p{L}]+\\s+){0,5}[\\p{L}]+|[a-z]+)(?: \\([a-z]+\\))?)\\s*[,;-]\\s*(?<group>[A-F])");
+            Pattern pattern = Pattern.compile("(?<id>\\d+)\\s*[,;-]\\s*(?<name>([A-Z][a-z]+\\s+){0,2}[A-Z][a-z]+)\\s*[,;-]\\s*(?<manager>(([\\p{L}]+\\s+){0,5}[\\p{L}]+|[a-z]+)(?: \\([a-z]+\\))?)\\s*[,;-]\\s*(?<group>[A-Za-z])");
 
             int lineNum = 0;
             String line;
@@ -46,15 +48,14 @@ public class TeamsCSVService {
                     int id = Integer.parseInt(matcher.group("id"));
 
                     if (teamsRepository.existsById(id)) {
-                        warnings.add("Entity already exists in the table. Row" + lineNum);
+                        warnings.add("Team already exists in the table. Row" + lineNum);
                     } else {
 
                         String name = matcher.group("name");
                         String manager = matcher.group("manager");
-                        String group = matcher.group("group");
+                        String group = matcher.group("group").toUpperCase();
 
                         Team team = new Team();
-                        team.setId(id);
                         team.setName(name);
                         team.setManagerFullName(manager);
                         team.setGroupF(Group.valueOf(group));
@@ -62,9 +63,11 @@ public class TeamsCSVService {
                         teamsRepository.save(team);
                     }
                 } else {
-                    warnings.add("Line" + lineNum + "doesn't match. Skipping the line.");
+                    warnings.add("Line " + lineNum + " doesn't match in Teams. Skipping the line.");
                 }
             }
+        } catch (FileNotFoundException e) {
+            warnings.add("File teams.csv not found. Please upload it first!");
         } catch (IOException e) {
             e.printStackTrace();
         }

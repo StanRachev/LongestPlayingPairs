@@ -8,6 +8,7 @@ import com.academy.longestplayingpairs.api.repository.TeamsRepository;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -21,7 +22,8 @@ public class PlayersCSVService {
     PlayersRepository playersRepository;
     TeamsRepository teamsRepository;
 
-    private final String PATH_PLAYERS = "api/src/main/resources/upload-dir/players.csv";
+//    private final String PATH_PLAYERS = "api/src/main/resources/upload-dir/players.csv";
+    private final String PATH_PLAYERS = "api/src/main/resources/test/players.csv";
 
     public PlayersCSVService(PlayersRepository playersRepository, TeamsRepository teamsRepository) {
         this.playersRepository = playersRepository;
@@ -50,7 +52,7 @@ public class PlayersCSVService {
                     int id = Integer.parseInt(matcher.group("id"));
 
                     if (playersRepository.existsById(id)) {
-                        warnings.add("Entity already exists in the table. Row" + lineNum);
+                        warnings.add("Player already exists in the table. Row" + lineNum);
                     } else {
                         int number = Integer.parseInt(matcher.group("number"));
                         String position = matcher.group("position");
@@ -58,7 +60,6 @@ public class PlayersCSVService {
                         int teamId = Integer.parseInt(matcher.group("teamid"));
 
                         Player player = new Player();
-                        player.setId(id);
                         player.setTeamNumber(number);
                         player.setPosition(PlayerPosition.valueOf(position));
                         player.setFullName(name);
@@ -69,13 +70,15 @@ public class PlayersCSVService {
                             player.setTeam(team);
                             playersRepository.save(player);
                         } else {
-                            warnings.add("Line" + lineNum + ": Team with id " + teamId + " is not found. Skipping the line.");
+                            warnings.add("Line " + lineNum + ": Team with id " + teamId + " is not found in Players. Skipping the line.");
                         }
                     }
                 } else {
-                    warnings.add("Line" + lineNum + "doesn't match. Skipping the line.");
+                    warnings.add("Line " + lineNum + " in Players is not correct. Skipping the line.");
                 }
             }
+        } catch (FileNotFoundException e) {
+            warnings.add("File players.csv isn't found. Please upload it first!");
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -6,5 +6,7 @@ public enum Group {
     C,
     D,
     E,
-    F
+    F,
+    G,
+    H
 }

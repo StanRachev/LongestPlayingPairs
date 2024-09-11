@@ -9,6 +9,7 @@ import com.academy.longestplayingpairs.api.repository.RecordsRepository;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -23,7 +24,8 @@ public class RecordsCSVService {
     PlayersRepository playersRepository;
     MatchesRepository matchesRepository;
 
-    private final String PATH_RECORDS = "api/src/main/resources/upload-dir/records.csv";
+//    private final String PATH_RECORDS = "api/src/main/resources/upload-dir/records.csv";
+    private final String PATH_RECORDS = "api/src/main/resources/test/records.csv";
 
     public RecordsCSVService(RecordsRepository recordsRepository, PlayersRepository playersRepository, MatchesRepository matchesRepository) {
         this.recordsRepository = recordsRepository;
@@ -53,7 +55,7 @@ public class RecordsCSVService {
                     int id = Integer.parseInt(matcher.group("id"));
 
                     if (recordsRepository.existsById(id)) {
-                        warnings.add("Entity already exists in the table. Row" + lineNum);
+                        warnings.add("Record already exists in the table. Row" + lineNum);
                     } else {
                         int fromMin = Integer.parseInt(matcher.group("frommin"));
                         int toMin;
@@ -64,7 +66,7 @@ public class RecordsCSVService {
                         }
 
                         if (fromMin > toMin) {
-                            warnings.add("FromMinute cannot be bigger than ToMinute on line " + lineNum);
+                            warnings.add("FromMinute cannot be bigger than ToMinute on line " + lineNum + " in Records");
                             continue;
                         }
 
@@ -76,7 +78,6 @@ public class RecordsCSVService {
 
                         Record record = new Record();
 
-                        record.setId(id);
                         record.setFromMinute(fromMin);
                         record.setToMinute(toMin);
 
@@ -89,6 +90,8 @@ public class RecordsCSVService {
                     }
                 }
             }
+        } catch (FileNotFoundException e) {
+            warnings.add("File records.csv isn't found. Please upload it first!");
         } catch (IOException e) {
             e.printStackTrace();
         }

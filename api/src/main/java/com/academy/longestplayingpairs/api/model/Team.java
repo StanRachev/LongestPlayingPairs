@@ -18,6 +18,7 @@ public class Team {
 
     @Id
     @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     @NotNull
     @Column(name = "name")

@@ -15,6 +15,7 @@ public class Record {
 
     @Id
     @NotNull
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     @ManyToOne

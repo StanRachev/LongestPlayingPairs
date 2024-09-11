@@ -1,6 +1,6 @@
 package com.academy.longestplayingpairs.api;
 
-import com.academy.longestplayingpairs.api.service.StorageService;
+import com.academy.longestplayingpairs.api.service.interfaces.StorageService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

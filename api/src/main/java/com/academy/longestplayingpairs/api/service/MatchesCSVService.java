@@ -7,6 +7,7 @@ import com.academy.longestplayingpairs.api.repository.TeamsRepository;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.time.LocalDate;
@@ -22,7 +23,8 @@ public class MatchesCSVService {
     private final TeamsRepository teamsRepository;
     private final DateService dateService;
 
-    private final String PATH_MATCHES = "api/src/main/resources/upload-dir/matches.csv";
+//    private final String PATH_MATCHES = "api/src/main/resources/upload-dir/matches.csv";
+    private final String PATH_MATCHES = "api/src/main/resources/test/matches.csv";
 
     public MatchesCSVService(MatchesRepository matchesRepository, TeamsRepository teamsRepository, DateService dateService) {
         this.matchesRepository = matchesRepository;
@@ -52,7 +54,7 @@ public class MatchesCSVService {
                     int id = Integer.parseInt(matcher.group("id"));
 
                     if (matchesRepository.existsById(id)) {
-                        warnings.add("Entity already exists in the table. Row" + lineNum);
+                        warnings.add("Match already exists in the table. Row" + lineNum);
                     } else {
                         String dateStr = matcher.group("date").trim();
 
@@ -70,7 +72,7 @@ public class MatchesCSVService {
                         Team teamB = teamsRepository.findById(bTeamId).orElse(null);
 
                         if (teamA == null || teamB == null) {
-                            warnings.add("Line" + lineNum + ": Team with id " + aTeamId + " is not found. Skipping the line.");
+                            warnings.add("Line" + lineNum + ": Team with id " + aTeamId + " is not found in Matches. Skipping the line.");
                             continue;
                         }
 
@@ -78,7 +80,6 @@ public class MatchesCSVService {
 
                         Match match = new Match();
 
-                        match.setId(id);
                         match.setDate(date);
                         match.setATeamID(teamA);
                         match.setBTeamID(teamB);
@@ -87,9 +88,11 @@ public class MatchesCSVService {
                         matchesRepository.save(match);
                     }
                 } else {
-                    warnings.add("Line" + lineNum + "doesn't match. Skipping the line.");
+                    warnings.add("Line " + lineNum + " in Matches isn't correct. Skipping the line.");
                 }
             }
+        } catch (FileNotFoundException e) {
+            warnings.add("File matches.csv isn't found. Please upload it first!");
         } catch (IOException e) {
             e.printStackTrace();
         }

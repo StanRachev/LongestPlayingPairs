@@ -1,5 +1,6 @@
 package com.academy.longestplayingpairs.api.service;
 
+import com.academy.longestplayingpairs.api.service.interfaces.StorageService;
 import com.academy.longestplayingpairs.api.service.storageUtils.StorageException;
 import com.academy.longestplayingpairs.api.service.storageUtils.StorageFileNotFoundException;
 import com.academy.longestplayingpairs.api.service.storageUtils.StorageProperties;

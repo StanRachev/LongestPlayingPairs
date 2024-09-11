@@ -25,10 +25,10 @@ public class DateService {
 
     private Map<String, Pattern> addPatterns() {
         Map<String, Pattern> datePatterns = new HashMap<>();
-        datePatterns.put("dd-mm-yyyy", Pattern.compile("^(?<dayjun>1[4-9]|2[0-9]|30)([/\\-.])(?<jun>0?6|[Jj]un)\\2(?:2024|24)$|^(?<dayjul>0?[1-9]|1[0-4])([/\\-.])(?<jul>0?7|[Jj]ul)\\5(?:2024|24)$"));
-        datePatterns.put("mm-dd-yyyy", Pattern.compile("^\\s*(?<jun>0?6|[Jj]un)([/\\-.])(?<dayjun>1[4-9]|2[0-9]|30)\\2(?:2024|24)\\s*$|^\\s*(?<jul>0?7|[Jj]ul)([/\\-.])(?<dayjul>0?[1-9]|1[0-4])\\5(?:2024|24)\\s*$"));
-        datePatterns.put("yyyy-mm-dd", Pattern.compile("^(?:2024|24)([/\\-.])(?<jun>0?6|[Jj]un)\\1(?<dayjun>1[4-9]|2[0-9]|30)$|^(?:2024|24)([/\\-.])(?<jul>0?7|[Jj]ul)\\4(?<dayjul>0?[1-9]|1[0-4])$"));
-        datePatterns.put("yyyy-dd-mm", Pattern.compile("^(?:2024|24)([/\\-.])(?<dayjun>1[4-9]|2[0-9]|30)\\1(?<jun>0?6|[Jj]un)$|^(?:2024|24)([/\\-.])(?<dayjul>0?[1-9]|1[0-4])\\4(?<jul>0?7|[Jj]ul)$"));
+        datePatterns.put("dd.mm.yyyy", Pattern.compile("^(?<dayjun>1[4-9]|2[0-9]|30)([/\\-.])(?<jun>0?6|[Jj]un)\\2(?:2024|24)$|^(?<dayjul>0?[1-9]|1[0-4])([/\\-.])(?<jul>0?7|[Jj]ul)\\5(?:2024|24)$"));
+        datePatterns.put("mm.dd.yyyy", Pattern.compile("^\\s*(?<jun>0?6|[Jj]un)([/\\-.])(?<dayjun>1[4-9]|2[0-9]|30)\\2(?:2024|24)\\s*$|^\\s*(?<jul>0?7|[Jj]ul)([/\\-.])(?<dayjul>0?[1-9]|1[0-4])\\5(?:2024|24)\\s*$"));
+        datePatterns.put("yyyy.mm.dd", Pattern.compile("^(?:2024|24)([/\\-.])(?<jun>0?6|[Jj]un)\\1(?<dayjun>1[4-9]|2[0-9]|30)$|^(?:2024|24)([/\\-.])(?<jul>0?7|[Jj]ul)\\4(?<dayjul>0?[1-9]|1[0-4])$"));
+        datePatterns.put("yyyy.dd.mm", Pattern.compile("^(?:2024|24)([/\\-.])(?<dayjun>1[4-9]|2[0-9]|30)\\1(?<jun>0?6|[Jj]un)$|^(?:2024|24)([/\\-.])(?<dayjul>0?[1-9]|1[0-4])\\4(?<jul>0?7|[Jj]ul)$"));
 
         return datePatterns;
     }
