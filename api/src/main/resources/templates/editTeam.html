@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Team</title>
+</head>
+<body>
+<h1>Add Team</h1>
+
+<form th:action="@{/teams/edit/{id}(id=${team.id})}" th:object="${team}" method="post">
+    <label>Name: <input type="text" th:field="*{name}"></label>
+    <label>Manager (Full Name): <input type="text" th:field="*{managerFullName}"></label>
+    <label>Group:
+        <select th:field="*{groupF}">
+            <option th:each="group : ${T(com.academy.longestplayingpairs.api.model.enums.Group).values()}"
+                    th:value="${group}" th:text="${group}">Group</option>
+        </select>
+    </label>
+    <button type="submit">Update team</button>
+</form>
+
+</body>
+</html>
