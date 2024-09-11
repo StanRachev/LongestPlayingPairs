@@ -19,6 +19,10 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+// Processes CSV files and stores them into the database.
+// Displays the main page of the website with result from the algorithm
+// and tables with teams, players and matches.
+
 @Controller
 @RequestMapping("/api")
 public class DataController {
@@ -47,6 +51,10 @@ public class DataController {
         this.playersRepository = playersRepository;
     }
 
+
+    // Checks if the required files are uploaded
+    // Assigns them to their appropriate service classes
+    // Redirects to /api/main with warnings, if any
     @GetMapping("/")
     public String uploadAll(@RequestParam(required = false) String dateFormat, RedirectAttributes redirectAttributes) {
 
@@ -76,6 +84,8 @@ public class DataController {
         return "redirect:/";
     }
 
+    // Finds the teams, players and matches from the DB and adds them to the model
+    // Returns the main page - index.html
     @GetMapping("/main")
     public String mainPage(Model model) {
         List<Match> matches = matchesRepository.findAll();
@@ -93,6 +103,8 @@ public class DataController {
         return "index";
     }
 
+    // Finds the longest pairs that played together and adds them to the model
+    // Returns details.html with the displayed results
     @GetMapping("/result")
     public String getDetails(Model model) {
         List<PlayerPair> pairs = playersService.getLongestPlayedPair();

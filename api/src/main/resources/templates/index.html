@@ -6,6 +6,8 @@
     <title>Manager</title>
 </head>
 
+<body>
+
 <h1 style="text-align: center;" ><b>Longest Playing Pair</b></h1>
 
 <div class="container">
@@ -15,8 +17,6 @@
         </a>
     </div>
 </div>
-
-<body>
 
 <div th:if="${not #lists.isEmpty(warnings)}">
     <ul>
@@ -54,9 +54,6 @@
                 <td th:text="${team.name}">Name</td>
                 <td th:text="${team.managerFullName}">Manager</td>
                 <td th:text="${team.groupF}">Group</td>
-                <td>
-                    <a th:href="@{/teams/remove/{id}(id=${team.id})}"><button>Remove</button></a>
-                </td>
                 <td>
                     <a th:href="@{/teams/edit/{id}(id=${team.id})}"><button>Edit</button></a>
                 </td>

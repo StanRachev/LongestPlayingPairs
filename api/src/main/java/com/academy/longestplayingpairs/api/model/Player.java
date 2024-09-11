@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Entity
 @Table(name = "players", uniqueConstraints = {
         @UniqueConstraint(columnNames = {"id", "full_name"})
@@ -31,6 +33,9 @@ public class Player {
     @ManyToOne
     @JoinColumn(name = "team_id")
     private Team team;
+
+    @OneToMany(mappedBy = "player")
+    private List<Record> records;
 
     public Player(int id, int teamNumber, PlayerPosition position, String fullName, Team team) {
         this.id = id;

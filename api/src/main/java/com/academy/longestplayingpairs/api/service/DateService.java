@@ -8,6 +8,9 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+// Class for validating date formats
+// Converts date of type String to a LocalDate object
+
 @Service
 public class DateService {
 
@@ -17,12 +20,7 @@ public class DateService {
         this.datePatterns = addPatterns();
     }
 
-    LocalDate convertToLocalDate(String dateFormatOption, String dateStr) {
-        Pattern datePattern = getPattern(datePatterns, dateFormatOption);
-
-        return toLocalDate(datePattern, dateStr);
-    }
-
+    // Adds the patterns to a map with all date formats
     private Map<String, Pattern> addPatterns() {
         Map<String, Pattern> datePatterns = new HashMap<>();
         datePatterns.put("dd.mm.yyyy", Pattern.compile("^(?<dayjun>1[4-9]|2[0-9]|30)([/\\-.])(?<jun>0?6|[Jj]un)\\2(?:2024|24)$|^(?<dayjul>0?[1-9]|1[0-4])([/\\-.])(?<jul>0?7|[Jj]ul)\\5(?:2024|24)$"));
@@ -33,17 +31,19 @@ public class DateService {
         return datePatterns;
     }
 
+    // Returns a converted LocalDate object
+    LocalDate convertToLocalDate(String dateFormatOption, String dateStr) {
+        Pattern datePattern = getPattern(datePatterns, dateFormatOption);
+
+        return toLocalDate(datePattern, dateStr);
+    }
+
+    // Fetches the correct date format
     private Pattern getPattern(Map<String, Pattern> map, String dateFormat) {
         return map.get(dateFormat);
     }
 
-    boolean isDateCorrect(String patternChosen, String date) {
-        Pattern pattern = getPattern(datePatterns, patternChosen);
-        Matcher matcher = pattern.matcher(date);
-
-        return matcher.matches();
-    }
-
+    // Converts the date to a LocalDate object
     LocalDate toLocalDate(Pattern pattern, String date) {
 
         Matcher matcher = pattern.matcher(date);
@@ -52,6 +52,7 @@ public class DateService {
         int month = 0;
         int year = 2024;
 
+        // If date is jun or july
         if (matcher.matches()) {
             if (matcher.group("dayjun") != null) {
                 day = Integer.parseInt(matcher.group("dayjun"));
@@ -62,5 +63,13 @@ public class DateService {
             }
         }
         return LocalDate.of(year, month, day);
+    }
+
+    // Fetches the correct patterns and checks if the date is correct format
+    boolean isDateCorrect(String patternChosen, String date) {
+        Pattern pattern = getPattern(datePatterns, patternChosen);
+        Matcher matcher = pattern.matcher(date);
+
+        return matcher.matches();
     }
 }

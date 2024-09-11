@@ -14,18 +14,21 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+// Service for parsing CSV files to the DB
+
 @Service
 public class TeamsCSVService {
 
     TeamsRepository teamsRepository;
 
-//    private final String PATH_TEAMS = "api/src/main/resources/upload-dir/teams.csv";
-    private final String PATH_TEAMS = "api/src/main/resources/test/teams.csv";
+    private final String PATH_TEAMS = "api/src/main/resources/upload-dir/teams.csv";
 
     public TeamsCSVService(TeamsRepository teamsRepository) {
         this.teamsRepository = teamsRepository;
     }
 
+    // Uses pattern to validate the rows from the file
+    // Returns a list with warnings if a row is unsuccessfully parsed
     public List<String> csvParse() {
         List<String> warnings = new ArrayList<>();
 
@@ -37,6 +40,7 @@ public class TeamsCSVService {
             while ((line = reader.readLine()) != null) {
                 ++lineNum;
 
+                // Skips first row of the file
                 if (lineNum == 1) {
                     continue;
                 }

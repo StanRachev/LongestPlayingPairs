@@ -6,5 +6,4 @@ public interface TeamServiceI {
 
     public String createTeam(Team team);
     public String editTeam(int id, Team team);
-    public void removeTeam(int id);
 }

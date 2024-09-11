@@ -3,34 +3,36 @@
 <head>
     <link rel="stylesheet" th:href="@{/css/style.css}"/>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Pairs</title>
 </head>
 
-<div>
-    <form action="/api/main" method="get">
-        <button type="submit">Return</button>
-    </form>
-</div>
+<body>
+    <div>
+        <form action="/api/main" method="get">
+            <button type="submit">Return</button>
+        </form>
+    </div>
 
-<div th:if="${longestPairs != null}">
-    <h2>Player Pairs and Matches</h2>
-    <ul>
-        <li th:each="pair : ${longestPairs}">
-            <h3>
-                <span th:text="${pair.playerOne.fullName}"></span> and
-                <span th:text="${pair.playerTwo.fullName}"></span> |
-                Total time: <span th:text="${pair.totalTime}"></span>
-            </h3>
-            <h4>Matches:</h4>
-            <ul>
-                <li th:each="match : ${pair.matchesTotalTime}">
-                    <span th:text="${match.key.date}"></span> -
-                    <span th:text="${match.key.aTeamID.name}"></span> vs
-                    <span th:text="${match.key.bTeamID.name}"></span>
-                    (Played together for <span th:text="${match.value}"></span> minutes)
-                </li>
-            </ul>
-        </li>
-    </ul>
-</div>
+    <div th:if="${longestPairs != null}">
+        <h2>Player Pairs and Matches</h2>
+        <ul>
+            <li th:each="pair : ${longestPairs}">
+                <h3>
+                    <span th:text="${pair.playerOne.fullName}"></span> and
+                    <span th:text="${pair.playerTwo.fullName}"></span> |
+                    Total time: <span th:text="${pair.totalTime}"></span>
+                </h3>
+                <h4>Matches:</h4>
+                <ul>
+                    <li th:each="match : ${pair.matchesTotalTime}">
+                        <span th:text="${match.key.date}"></span> -
+                        <span th:text="${match.key.aTeamID.name}"></span> vs
+                        <span th:text="${match.key.bTeamID.name}"></span>
+                        (Played together for <span th:text="${match.value}"></span> minutes)
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+</body>
 </html>

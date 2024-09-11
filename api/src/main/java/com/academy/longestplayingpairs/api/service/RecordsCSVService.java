@@ -17,6 +17,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+// Service for parsing CSV files to the DB
+
 @Service
 public class RecordsCSVService {
 
@@ -24,8 +26,7 @@ public class RecordsCSVService {
     PlayersRepository playersRepository;
     MatchesRepository matchesRepository;
 
-//    private final String PATH_RECORDS = "api/src/main/resources/upload-dir/records.csv";
-    private final String PATH_RECORDS = "api/src/main/resources/test/records.csv";
+    private final String PATH_RECORDS = "api/src/main/resources/upload-dir/records.csv";
 
     public RecordsCSVService(RecordsRepository recordsRepository, PlayersRepository playersRepository, MatchesRepository matchesRepository) {
         this.recordsRepository = recordsRepository;
@@ -33,6 +34,8 @@ public class RecordsCSVService {
         this.matchesRepository = matchesRepository;
     }
 
+    // Uses pattern to validate the rows from the file
+    // Returns a list with warnings if a row is unsuccessfully parsed
     public List<String> csvParse() {
         List<String> warnings = new ArrayList<>();
 
@@ -44,6 +47,7 @@ public class RecordsCSVService {
             while ((line = reader.readLine()) != null) {
                 ++lineNum;
 
+                // Skips first row
                 if (lineNum == 1) {
                     continue;
                 }
@@ -85,7 +89,6 @@ public class RecordsCSVService {
                             record.setPlayer(player);
                             record.setMatch(match);
                         }
-
                         recordsRepository.save(record);
                     }
                 }

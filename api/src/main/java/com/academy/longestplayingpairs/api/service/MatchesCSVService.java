@@ -16,6 +16,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+// Service for parsing CSV files to the DB
+
 @Service
 public class MatchesCSVService {
 
@@ -23,8 +25,7 @@ public class MatchesCSVService {
     private final TeamsRepository teamsRepository;
     private final DateService dateService;
 
-//    private final String PATH_MATCHES = "api/src/main/resources/upload-dir/matches.csv";
-    private final String PATH_MATCHES = "api/src/main/resources/test/matches.csv";
+    private final String PATH_MATCHES = "api/src/main/resources/upload-dir/matches.csv";
 
     public MatchesCSVService(MatchesRepository matchesRepository, TeamsRepository teamsRepository, DateService dateService) {
         this.matchesRepository = matchesRepository;
@@ -32,6 +33,10 @@ public class MatchesCSVService {
         this.dateService = dateService;
     }
 
+    // CSV parsing to DB
+    // Uses pattern to check if the rows are correctly formated
+    // Parses the date to LocalDate object
+    // Returns list with warnings if a row is unsuccessfully parsed
     public List<String> csvParse(String dateFormatOption) {
         List<String> warnings = new ArrayList<>();
 
@@ -43,6 +48,7 @@ public class MatchesCSVService {
             while ((line = reader.readLine()) != null) {
                 ++lineNum;
 
+                // Skips first row with headers
                 if (lineNum == 1) {
                     continue;
                 }
@@ -63,6 +69,7 @@ public class MatchesCSVService {
                             continue;
                         }
 
+                        // Converts the date String to a LocalDate object
                         LocalDate date = dateService.convertToLocalDate(dateFormatOption, dateStr);
 
                         int aTeamId = Integer.parseInt(matcher.group("ateamid"));

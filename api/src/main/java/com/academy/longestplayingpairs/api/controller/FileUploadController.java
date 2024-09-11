@@ -16,6 +16,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.io.IOException;
 import java.util.stream.Collectors;
 
+// Class that handles file uploads
+
 @Controller
 public class FileUploadController {
 
