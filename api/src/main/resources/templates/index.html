@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+    <meta charset="UTF-8">
+    <title>Manager</title>
+</head>
+
+<h1 style="text-align: center;" ><b>Longest Playing Pair</b></h1>
+
+<div class="container">
+    <div class="center">
+        <a th:href="@{/api/result}">
+            <button class="button">Result</button>
+        </a>
+    </div>
+</div>
+
+<body>
+
+<div th:if="${not #lists.isEmpty(warnings)}">
+    <ul>
+        <li th:each="warning : ${warnings}" th:text="${warning}"></li>
+    </ul>
+</div>
+
+<div th:if="${warnings.contains('File not found. Please upload it first!')}">
+    <form action="/" method="get">
+        <button type="submit">Return to Upload Page</button>
+    </form>
+</div>
+
+<div>
+    <a th:href="@{/teams/addTeams}">
+        <button>Add new team</button>
+    </a>
+</div>
+
+<div class="row">
+    <div class="column">
+        <h1 >Teams</h1>
+        <table>
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Manager</th>
+                <th>Group</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="team : ${teams}">
+                <td th:text="${team.id}">ID</td>
+                <td th:text="${team.name}">Name</td>
+                <td th:text="${team.managerFullName}">Manager</td>
+                <td th:text="${team.groupF}">Group</td>
+                <td>
+                    <a th:href="@{/teams/remove/{id}(id=${team.id})}"><button>Remove</button></a>
+                </td>
+                <td>
+                    <a th:href="@{/teams/edit/{id}(id=${team.id})}"><button>Edit</button></a>
+                </td>
+            </tr>
+
+            </tbody>
+        </table>
+    </div>
+    <div class="column">
+        <h1>Players</h1>
+        <table>
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Team Number</th>
+                <th>Position</th>
+                <th>Full Name</th>
+                <th>Team ID</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="player : ${players}">
+                <td th:text="${player.id}">ID</td>
+                <td th:text="${player.teamNumber}">Team Number</td>
+                <td th:text="${player.position}">Position</td>
+                <td th:text="${player.fullName}">Full Name</td>
+                <td th:text="${player.team.id}">Team ID</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="column">
+        <h1>Matches</h1>
+        <table>
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>A Team ID</th>
+                <th>B Team ID</th>
+                <th>Date</th>
+                <th>Score</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="match : ${matches}">
+                <td th:text="${match.id}">ID</td>
+                <td th:text="${match.ATeamID.id + ' (' + match.ATeamID.name + ')'}">A Team ID</td>
+                <td th:text="${match.BTeamID.id + ' (' + match.BTeamID.name + ')'}">B Team ID</td>
+                <td th:text="${match.date}">Date</td>
+                <td th:text="${match.score}">Score</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+</body>
+</html>
