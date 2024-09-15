@@ -25,7 +25,8 @@ public class PlayersCSVService implements CSVParser {
     PlayersRepository playersRepository;
     TeamsRepository teamsRepository;
 
-    private final String PATH_PLAYERS = "api/src/main/resources/upload-dir/players.csv";
+//    private final String PATH_PLAYERS = "api/src/main/resources/upload-dir/players.csv";
+    private final String PATH_PLAYERS = "api/src/main/resources/test/players.csv";
 
     public PlayersCSVService(PlayersRepository playersRepository, TeamsRepository teamsRepository) {
         this.playersRepository = playersRepository;

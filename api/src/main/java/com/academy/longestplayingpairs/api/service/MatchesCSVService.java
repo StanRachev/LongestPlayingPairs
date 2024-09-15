@@ -26,7 +26,8 @@ public class MatchesCSVService implements CSVParser {
     private final TeamsRepository teamsRepository;
     private final DateService dateService;
 
-    private final String PATH_MATCHES = "api/src/main/resources/upload-dir/matches.csv";
+//    private final String PATH_MATCHES = "api/src/main/resources/upload-dir/matches.csv";
+    private final String PATH_MATCHES = "api/src/main/resources/test/matches.csv";
 
     private String dateFormatOption;
 
