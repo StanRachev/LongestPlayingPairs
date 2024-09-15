@@ -6,8 +6,8 @@ import com.academy.longestplayingpairs.api.model.Record;
 import com.academy.longestplayingpairs.api.repository.MatchesRepository;
 import com.academy.longestplayingpairs.api.repository.PlayersRepository;
 import com.academy.longestplayingpairs.api.repository.RecordsRepository;
+import com.academy.longestplayingpairs.api.service.interfaces.CSVParser;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 // Service for parsing CSV files to the DB
 
 @Service
-public class RecordsCSVService {
+public class RecordsCSVService implements CSVParser {
 
     RecordsRepository recordsRepository;
     PlayersRepository playersRepository;
@@ -38,7 +38,7 @@ public class RecordsCSVService {
     // Uses pattern to validate the rows from the file
     // Returns a list with warnings if a row is unsuccessfully parsed
 
-    @Transactional
+    @Override
     public List<String> csvParse() {
         List<String> warnings = new ArrayList<>();
 
