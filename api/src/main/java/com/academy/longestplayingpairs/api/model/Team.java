@@ -29,7 +29,7 @@ public class Team {
     @NotNull
     @Column(name = "group_f")
     private Group groupF;
-    
+
     @OneToMany(mappedBy = "team")
     private List<Player> players;
 
