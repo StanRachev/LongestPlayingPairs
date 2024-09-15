@@ -8,6 +8,7 @@ import com.academy.longestplayingpairs.api.repository.MatchesRepository;
 import com.academy.longestplayingpairs.api.repository.PlayersRepository;
 import com.academy.longestplayingpairs.api.repository.TeamsRepository;
 import com.academy.longestplayingpairs.api.service.*;
+import com.academy.longestplayingpairs.api.service.interfaces.CSVParser;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,10 +28,11 @@ import java.util.List;
 @RequestMapping("/api")
 public class DataController {
 
-    private final TeamsCSVService teamsCSVService;
-    private final PlayersCSVService playersCSVService;
-    private final MatchesCSVService matchesCSVService;
-    private final RecordsCSVService recordsCSVService;
+    private final CSVParseService csvParseService;
+    private final CSVParser teamsCSVService;
+    private final CSVParser playersCSVService;
+    private final CSVParser matchesCSVService;
+    private final CSVParser recordsCSVService;
 
     private final PlayersService playersService;
 
@@ -38,9 +40,10 @@ public class DataController {
     private final TeamsRepository teamsRepository;
     private final PlayersRepository playersRepository;
 
-    public DataController(TeamsCSVService teamsCSVService, PlayersCSVService playersCSVService,
-                          MatchesCSVService matchesCSVService, RecordsCSVService recordsCSVService, PlayersService playersService,
+    public DataController(CSVParseService csvParseService, CSVParser teamsCSVService, CSVParser playersCSVService,
+                          CSVParser matchesCSVService, CSVParser recordsCSVService, PlayersService playersService,
                           MatchesRepository matchesRepository, TeamsRepository teamsRepository, PlayersRepository playersRepository) {
+        this.csvParseService = csvParseService;
         this.teamsCSVService = teamsCSVService;
         this.playersCSVService = playersCSVService;
         this.matchesCSVService = matchesCSVService;
@@ -50,7 +53,6 @@ public class DataController {
         this.teamsRepository = teamsRepository;
         this.playersRepository = playersRepository;
     }
-
 
     // Checks if the required files are uploaded
     // Assigns them to their appropriate service classes
@@ -64,9 +66,11 @@ public class DataController {
         File fileRecords = new File("api/src/main/resources/test/records.csv");
 
         if (fileMatch.exists() && filePlayer.exists() && fileTeams.exists() && fileRecords.exists()) {
+            matchesCSVService.setDateFormatOption(dateFormat);
+
             List<String> teamsWarnings = teamsCSVService.csvParse();
             List<String> playersWarnings = playersCSVService.csvParse();
-            List<String> matchesWarnings = matchesCSVService.csvParse(dateFormat);
+            List<String> matchesWarnings = matchesCSVService.csvParse();
             List<String> recordsWarnings = recordsCSVService.csvParse();
 
             List<String> warnings = new ArrayList<>();
