@@ -5,6 +5,7 @@ import com.academy.longestplayingpairs.api.model.Team;
 import com.academy.longestplayingpairs.api.repository.MatchesRepository;
 import com.academy.longestplayingpairs.api.repository.TeamsRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -37,6 +38,8 @@ public class MatchesCSVService {
     // Uses pattern to check if the rows are correctly formated
     // Parses the date to LocalDate object
     // Returns list with warnings if a row is unsuccessfully parsed
+
+    @Transactional
     public List<String> csvParse(String dateFormatOption) {
         List<String> warnings = new ArrayList<>();
 

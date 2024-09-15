@@ -6,6 +6,7 @@ import com.academy.longestplayingpairs.api.model.enums.PlayerPosition;
 import com.academy.longestplayingpairs.api.repository.PlayersRepository;
 import com.academy.longestplayingpairs.api.repository.TeamsRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -33,6 +34,8 @@ public class PlayersCSVService {
 
     // uses Pattern to validate the rows
     // Returns a list with warnings if a row is unsuccessfully parsed
+
+    @Transactional
     public List<String> csvParse() {
         List<String> warnings = new ArrayList<>();
 
