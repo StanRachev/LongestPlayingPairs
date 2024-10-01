@@ -8,7 +8,6 @@ import com.academy.longestplayingpairs.api.service.interfaces.CSVParser;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.time.LocalDate;
@@ -106,13 +105,11 @@ public class MatchesCSVService implements CSVParser {
                         matchesRepository.save(match);
                     }
                 } else {
-                    warnings.add("Line " + lineNum + " in Matches isn't correct. Skipping the line.");
+                    warnings.add("Line " + lineNum + " in Matches isn't correct.");
                 }
             }
-        } catch (FileNotFoundException e) {
-            warnings.add("File matches.csv isn't found. Please upload it first!");
         } catch (IOException e) {
-            e.printStackTrace();
+            warnings.add("File matches.csv isn't found. Please upload it first!");
         }
         return warnings;
     }

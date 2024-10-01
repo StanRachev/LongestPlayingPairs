@@ -7,7 +7,6 @@ import com.academy.longestplayingpairs.api.service.interfaces.CSVParser;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -71,13 +70,11 @@ public class TeamsCSVService implements CSVParser {
                         teamsRepository.save(team);
                     }
                 } else {
-                    warnings.add("Line " + lineNum + " doesn't match in Teams. Skipping the line.");
+                    warnings.add("Line " + lineNum + " doesn't match in Teams.");
                 }
             }
-        } catch (FileNotFoundException e) {
-            warnings.add("File teams.csv not found. Please upload it first!");
         } catch (IOException e) {
-            e.printStackTrace();
+            warnings.add("File teams.csv not found. Please upload it first!");
         }
         return warnings;
     }

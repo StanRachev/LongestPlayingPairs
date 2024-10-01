@@ -10,7 +10,6 @@ import com.academy.longestplayingpairs.api.service.interfaces.CSVParser;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -44,7 +43,7 @@ public class RecordsCSVService implements CSVParser {
         List<String> warnings = new ArrayList<>();
 
         try (BufferedReader reader = new BufferedReader(new FileReader(PATH_RECORDS))) {
-            Pattern pattern = Pattern.compile("^(?<id>([1-9][0-9]{0,3}))\\s*[,;-]\\s*(?<playerid>([1-9][0-9]{0,3}))\\s*[,;-]\\s*(?<matchid>([1-9][0-9]{0,1}))\\s*[,;-]\\s*(?<frommin>([0-9]|[1-8][0-9]|90))\\s*[,;-]\\s*(?<tomin>([1-9]|[1-8][0-9]|90|(?i)null))\\s*$");
+            Pattern pattern = Pattern.compile("^(?<id>([1-9][0-9]{0,3}))\\s*[,;-]\\s*(?<playerid>([1-9][0-9]{0,3}))\\s*[,;-]\\s*(?<matchid>([1-9][0-9]?))\\s*[,;-]\\s*(?<frommin>([0-9]|[1-8][0-9]|90))\\s*[,;-]\\s*(?<tomin>([1-9]|[1-8][0-9]|90|(?i)null))\\s*$");
 
             int lineNum = 0;
             String line;
@@ -95,12 +94,12 @@ public class RecordsCSVService implements CSVParser {
                         }
                         recordsRepository.save(record);
                     }
+                } else {
+                    warnings.add("Line " + lineNum + " doesn't match in Records.");
                 }
             }
-        } catch (FileNotFoundException e) {
-            warnings.add("File records.csv isn't found. Please upload it first!");
         } catch (IOException e) {
-            e.printStackTrace();
+            warnings.add("File records.csv isn't found. Please upload it first!");
         }
         return warnings;
     }

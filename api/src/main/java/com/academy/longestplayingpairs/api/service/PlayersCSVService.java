@@ -9,7 +9,6 @@ import com.academy.longestplayingpairs.api.service.interfaces.CSVParser;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -78,17 +77,15 @@ public class PlayersCSVService implements CSVParser {
                             player.setTeam(team);
                             playersRepository.save(player);
                         } else {
-                            warnings.add("Line " + lineNum + ": Team with id " + teamId + " is not found in Players. Skipping the line.");
+                            warnings.add("Line " + lineNum + ": Team with id " + teamId + " is not found in Players.");
                         }
                     }
                 } else {
-                    warnings.add("Line " + lineNum + " in Players is not correct. Skipping the line.");
+                    warnings.add("Line " + lineNum + " in Players is not correct.");
                 }
             }
-        } catch (FileNotFoundException e) {
-            warnings.add("File players.csv isn't found. Please upload it first!");
         } catch (IOException e) {
-            e.printStackTrace();
+            warnings.add("File players.csv isn't found. Please upload it first!");
         }
         return warnings;
     }
