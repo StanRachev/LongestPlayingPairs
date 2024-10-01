@@ -55,16 +55,7 @@ public class DataController {
         File fileRecords = new File("api/src/main/resources/test/records.csv");
 
         if (fileMatch.exists() && filePlayer.exists() && fileTeams.exists() && fileRecords.exists()) {
-            List<String> teamsWarnings = csvParseService.parseTeamsCSV();
-            List<String> playersWarnings = csvParseService.parsePlayersCSV();
-            List<String> matchesWarnings = csvParseService.parseMatchesCSV(dateFormat);
-            List<String> recordsWarnings = csvParseService.parseRecordsCSV();
-
-            List<String> warnings = new ArrayList<>();
-            warnings.addAll(teamsWarnings);
-            warnings.addAll(playersWarnings);
-            warnings.addAll(matchesWarnings);
-            warnings.addAll(recordsWarnings);
+            List<String> warnings = csvParseService.parseAllCSVs(dateFormat);
 
             redirectAttributes.addFlashAttribute("warnings", warnings);
 
