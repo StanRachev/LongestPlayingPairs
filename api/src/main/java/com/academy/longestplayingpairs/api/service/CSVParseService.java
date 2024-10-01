@@ -3,7 +3,10 @@ package com.academy.longestplayingpairs.api.service;
 import com.academy.longestplayingpairs.api.service.interfaces.CSVParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -23,6 +26,22 @@ public class CSVParseService {
         this.recordsCSVService = recordsCSVService;
     }
 
+    @Transactional
+    public List<String> parseAllCSVs(String dateFormat) {
+        List<String> warnings = new ArrayList<>();
+
+        warnings.addAll(parseTeamsCSV());
+        warnings.addAll(parsePlayersCSV());
+        warnings.addAll(parseMatchesCSV(dateFormat));
+        warnings.addAll(parseRecordsCSV());
+
+        if (!warnings.isEmpty()) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+        }
+
+        return warnings;
+    }
+
     public List<String> parseTeamsCSV() {
         return teamsCSVService.csvParse();
     }
@@ -33,7 +52,7 @@ public class CSVParseService {
 
     public List<String> parseMatchesCSV(String dateFormat) {
         if (matchesCSVService instanceof MatchesCSVService) {
-            ((MatchesCSVService) matchesCSVService).setDateFormatOption(dateFormat);
+            matchesCSVService.setDateFormatOption(dateFormat);
         }
         return matchesCSVService.csvParse();
     }
