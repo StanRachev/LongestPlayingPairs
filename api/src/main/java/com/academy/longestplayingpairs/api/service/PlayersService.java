@@ -5,7 +5,6 @@ import com.academy.longestplayingpairs.api.model.Player;
 import com.academy.longestplayingpairs.api.model.PlayerPair;
 import com.academy.longestplayingpairs.api.model.Record;
 import com.academy.longestplayingpairs.api.repository.PlayersRepository;
-import com.academy.longestplayingpairs.api.repository.RecordsRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -28,11 +27,9 @@ import java.util.Map;
 public class PlayersService {
 
     private final PlayersRepository playersRepository;
-    private final RecordsRepository recordsRepository;
 
-    public PlayersService(PlayersRepository playersRepository, RecordsRepository recordsRepository) {
+    public PlayersService(PlayersRepository playersRepository) {
         this.playersRepository = playersRepository;
-        this.recordsRepository = recordsRepository;
     }
 
     // This method finds all the same team pairs, which played together
