@@ -28,6 +28,8 @@ import java.util.List;
 @RequestMapping("/api")
 public class DataController {
 
+    private static final String FILE_PATH = "api/src/main/resources/test/";
+
     private final CSVParseService csvParseService;
     private final PlayersService playersService;
     private final MatchesRepository matchesRepository;
@@ -49,12 +51,12 @@ public class DataController {
     @GetMapping("/")
     public String uploadAll(@RequestParam(required = false) String dateFormat, RedirectAttributes redirectAttributes) {
 
-        File fileMatch = new File("api/src/main/resources/test/matches.csv");
-        File filePlayer = new File("api/src/main/resources/test/players.csv");
-        File fileTeams = new File("api/src/main/resources/test/teams.csv");
-        File fileRecords = new File("api/src/main/resources/test/records.csv");
+        File fileMatches = new File(FILE_PATH + "matches.csv");
+        File filePlayers = new File(FILE_PATH + "players.csv");
+        File fileTeams = new File(FILE_PATH + "teams.csv");
+        File fileRecords = new File(FILE_PATH + "records.csv");
 
-        if (fileMatch.exists() && filePlayer.exists() && fileTeams.exists() && fileRecords.exists()) {
+        if (fileMatches.exists() && filePlayers.exists() && fileTeams.exists() && fileRecords.exists()) {
             List<String> warnings = csvParseService.parseAllCSVs(dateFormat);
 
             redirectAttributes.addFlashAttribute("warnings", warnings);
