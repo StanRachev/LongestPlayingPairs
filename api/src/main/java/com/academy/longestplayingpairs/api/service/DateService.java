@@ -33,14 +33,14 @@ public class DateService {
 
     // Returns a converted LocalDate object
     LocalDate convertToLocalDate(String dateFormatOption, String dateStr) {
-        Pattern datePattern = getPattern(datePatterns, dateFormatOption);
+        Pattern datePattern = getPattern(dateFormatOption);
 
         return toLocalDate(datePattern, dateStr);
     }
 
     // Fetches the correct date format
-    private Pattern getPattern(Map<String, Pattern> map, String dateFormat) {
-        return map.get(dateFormat);
+    private Pattern getPattern(String dateFormat) {
+        return datePatterns.get(dateFormat);
     }
 
     // Converts the date to a LocalDate object
@@ -66,8 +66,8 @@ public class DateService {
     }
 
     // Fetches the correct patterns and checks if the date is correct format
-    boolean isDateCorrect(String patternChosen, String date) {
-        Pattern pattern = getPattern(datePatterns, patternChosen);
+    boolean isValidDateFormat(String patternChosen, String date) {
+        Pattern pattern = getPattern(patternChosen);
         Matcher matcher = pattern.matcher(date);
 
         return matcher.matches();
