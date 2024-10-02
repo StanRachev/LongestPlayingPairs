@@ -60,25 +60,26 @@ public class PlayersCSVService implements CSVParser {
 
                     if (playersRepository.existsById(id)) {
                         warnings.add("Player already exists in the table. Row" + lineNum);
+                        continue;
+                    }
+
+                    int number = Integer.parseInt(matcher.group("number"));
+                    String position = matcher.group("position");
+                    String name = matcher.group("name");
+                    int teamId = Integer.parseInt(matcher.group("teamid"));
+
+                    Player player = new Player();
+                    player.setTeamNumber(number);
+                    player.setPosition(PlayerPosition.valueOf(position));
+                    player.setFullName(name);
+
+                    Team team = teamsRepository.findById(teamId).orElse(null);
+
+                    if (team != null) {
+                        player.setTeam(team);
+                        playersRepository.save(player);
                     } else {
-                        int number = Integer.parseInt(matcher.group("number"));
-                        String position = matcher.group("position");
-                        String name = matcher.group("name");
-                        int teamId = Integer.parseInt(matcher.group("teamid"));
-
-                        Player player = new Player();
-                        player.setTeamNumber(number);
-                        player.setPosition(PlayerPosition.valueOf(position));
-                        player.setFullName(name);
-
-                        Team team = teamsRepository.findById(teamId).orElse(null);
-
-                        if (team != null) {
-                            player.setTeam(team);
-                            playersRepository.save(player);
-                        } else {
-                            warnings.add("Line " + lineNum + ": Team with id " + teamId + " is not found in Players.");
-                        }
+                        warnings.add("Line " + lineNum + ": Team with id " + teamId + " is not found in Players.");
                     }
                 } else {
                     warnings.add("Line " + lineNum + " in Players is not correct.");
