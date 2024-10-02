@@ -74,7 +74,7 @@ public class MatchesCSVService implements CSVParser {
                     } else {
                         String dateStr = matcher.group("date").trim();
 
-                        if (!dateService.isDateCorrect(dateFormatOption, dateStr)) {
+                        if (!dateService.isValidDateFormat(dateFormatOption, dateStr)) {
                             warnings.add("Date is not correct on line " + lineNum);
                             continue;
                         }
@@ -89,7 +89,14 @@ public class MatchesCSVService implements CSVParser {
                         Team teamB = teamsRepository.findById(bTeamId).orElse(null);
 
                         if (teamA == null || teamB == null) {
-                            warnings.add("Line" + lineNum + ": Team with id " + aTeamId + " is not found in Matches. Skipping the line.");
+
+                            int teamId;
+                            if (teamA == null) {
+                                teamId = aTeamId;
+                            } else {
+                                teamId = bTeamId;
+                            }
+                            warnings.add("Line" + lineNum + ": Team with id " + teamId + " is not found in Matches.");
                             continue;
                         }
 
