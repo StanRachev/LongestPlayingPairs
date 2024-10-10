@@ -7,7 +7,8 @@ import com.academy.longestplayingpairs.api.model.Team;
 import com.academy.longestplayingpairs.api.repository.MatchesRepository;
 import com.academy.longestplayingpairs.api.repository.PlayersRepository;
 import com.academy.longestplayingpairs.api.repository.TeamsRepository;
-import com.academy.longestplayingpairs.api.service.*;
+import com.academy.longestplayingpairs.api.service.CSVParseService;
+import com.academy.longestplayingpairs.api.service.PlayersService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,30 +28,22 @@ import java.util.List;
 @RequestMapping("/api")
 public class DataController {
 
-    private final TeamsCSVService teamsCSVService;
-    private final PlayersCSVService playersCSVService;
-    private final MatchesCSVService matchesCSVService;
-    private final RecordsCSVService recordsCSVService;
+    private static final String FILE_PATH = "api/src/main/resources/test/";
 
+    private final CSVParseService csvParseService;
     private final PlayersService playersService;
-
     private final MatchesRepository matchesRepository;
     private final TeamsRepository teamsRepository;
     private final PlayersRepository playersRepository;
 
-    public DataController(TeamsCSVService teamsCSVService, PlayersCSVService playersCSVService,
-                          MatchesCSVService matchesCSVService, RecordsCSVService recordsCSVService, PlayersService playersService,
-                          MatchesRepository matchesRepository, TeamsRepository teamsRepository, PlayersRepository playersRepository) {
-        this.teamsCSVService = teamsCSVService;
-        this.playersCSVService = playersCSVService;
-        this.matchesCSVService = matchesCSVService;
-        this.recordsCSVService = recordsCSVService;
+    public DataController(CSVParseService csvParseService, PlayersService playersService, MatchesRepository matchesRepository,
+                          TeamsRepository teamsRepository, PlayersRepository playersRepository) {
+        this.csvParseService = csvParseService;
         this.playersService = playersService;
         this.matchesRepository = matchesRepository;
         this.teamsRepository = teamsRepository;
         this.playersRepository = playersRepository;
     }
-
 
     // Checks if the required files are uploaded
     // Assigns them to their appropriate service classes
@@ -58,22 +51,13 @@ public class DataController {
     @GetMapping("/")
     public String uploadAll(@RequestParam(required = false) String dateFormat, RedirectAttributes redirectAttributes) {
 
-        File fileMatch = new File("api/src/main/resources/test/matches.csv");
-        File filePlayer = new File("api/src/main/resources/test/players.csv");
-        File fileTeams = new File("api/src/main/resources/test/teams.csv");
-        File fileRecords = new File("api/src/main/resources/test/records.csv");
+        File fileMatches = new File(FILE_PATH + "matches.csv");
+        File filePlayers = new File(FILE_PATH + "players.csv");
+        File fileTeams = new File(FILE_PATH + "teams.csv");
+        File fileRecords = new File(FILE_PATH + "records.csv");
 
-        if (fileMatch.exists() && filePlayer.exists() && fileTeams.exists() && fileRecords.exists()) {
-            List<String> teamsWarnings = teamsCSVService.csvParse();
-            List<String> playersWarnings = playersCSVService.csvParse();
-            List<String> matchesWarnings = matchesCSVService.csvParse(dateFormat);
-            List<String> recordsWarnings = recordsCSVService.csvParse();
-
-            List<String> warnings = new ArrayList<>();
-            warnings.addAll(teamsWarnings);
-            warnings.addAll(playersWarnings);
-            warnings.addAll(matchesWarnings);
-            warnings.addAll(recordsWarnings);
+        if (fileMatches.exists() && filePlayers.exists() && fileTeams.exists() && fileRecords.exists()) {
+            List<String> warnings = csvParseService.parseAllCSVs(dateFormat);
 
             redirectAttributes.addFlashAttribute("warnings", warnings);
 

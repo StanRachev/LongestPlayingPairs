@@ -3,10 +3,10 @@ package com.academy.longestplayingpairs.api.service;
 import com.academy.longestplayingpairs.api.model.Team;
 import com.academy.longestplayingpairs.api.model.enums.Group;
 import com.academy.longestplayingpairs.api.repository.TeamsRepository;
+import com.academy.longestplayingpairs.api.service.interfaces.CSVParser;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -17,11 +17,12 @@ import java.util.regex.Pattern;
 // Service for parsing CSV files to the DB
 
 @Service
-public class TeamsCSVService {
+public class TeamsCSVService implements CSVParser {
 
     TeamsRepository teamsRepository;
 
-    private final String PATH_TEAMS = "api/src/main/resources/upload-dir/teams.csv";
+//    private final String PATH_TEAMS = "api/src/main/resources/upload-dir/teams.csv";
+    private final String PATH_TEAMS = "api/src/main/resources/test/teams.csv";
 
     public TeamsCSVService(TeamsRepository teamsRepository) {
         this.teamsRepository = teamsRepository;
@@ -29,6 +30,8 @@ public class TeamsCSVService {
 
     // Uses pattern to validate the rows from the file
     // Returns a list with warnings if a row is unsuccessfully parsed
+
+    @Override
     public List<String> csvParse() {
         List<String> warnings = new ArrayList<>();
 
@@ -67,13 +70,11 @@ public class TeamsCSVService {
                         teamsRepository.save(team);
                     }
                 } else {
-                    warnings.add("Line " + lineNum + " doesn't match in Teams. Skipping the line.");
+                    warnings.add("Line " + lineNum + " doesn't match in Teams.");
                 }
             }
-        } catch (FileNotFoundException e) {
-            warnings.add("File teams.csv not found. Please upload it first!");
         } catch (IOException e) {
-            e.printStackTrace();
+            warnings.add("File teams.csv not found. Please upload it first!");
         }
         return warnings;
     }

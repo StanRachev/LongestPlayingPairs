@@ -6,6 +6,7 @@ import com.academy.longestplayingpairs.api.repository.TeamsRepository;
 import com.academy.longestplayingpairs.api.service.interfaces.TeamServiceI;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 // Team Service with methods for creating, editing and fetching a team by ID.
 
@@ -20,6 +21,8 @@ public class TeamsService implements TeamServiceI {
 
     // Validates the data and if correct saves the team to DB
     // Returns an update notification
+
+    @Transactional
     public String createTeam(Team team) {
         String notification;
 
@@ -36,6 +39,8 @@ public class TeamsService implements TeamServiceI {
     // Validates the team object
     // If correct, saves the updated object to DB
     // Returns an update notification
+
+    @Transactional
     public String editTeam(int id, Team team) {
         Team newTeam = teamsRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Team profile not found"));
 

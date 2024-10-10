@@ -5,7 +5,6 @@ import com.academy.longestplayingpairs.api.model.Player;
 import com.academy.longestplayingpairs.api.model.PlayerPair;
 import com.academy.longestplayingpairs.api.model.Record;
 import com.academy.longestplayingpairs.api.repository.PlayersRepository;
-import com.academy.longestplayingpairs.api.repository.RecordsRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -19,7 +18,7 @@ import java.util.Map;
 // 1. Entry point: getLongestPlayedPair().
 // 2. Fetching all the players and records from the repository.
 // 3. Comparing each pair from same teams.
-// 4. Finding the records for each player with findRecords().
+// 4. Finding the records for each player.
 // 5. Get the total playing time for the pair and the matches they've participated in
 // and adding them to PlayerPair object with totalTimePlayedWithMatches().
 // 6. Identifying pairs with the longest time with findLongestPlayingPairs().
@@ -28,18 +27,15 @@ import java.util.Map;
 public class PlayersService {
 
     private final PlayersRepository playersRepository;
-    private final RecordsRepository recordsRepository;
 
-    public PlayersService(PlayersRepository playersRepository, RecordsRepository recordsRepository) {
+    public PlayersService(PlayersRepository playersRepository) {
         this.playersRepository = playersRepository;
-        this.recordsRepository = recordsRepository;
     }
 
     // This method finds all the same team pairs, which played together
     // Returns a list with the longest playing pairs in case there is more than one pair
     public List<PlayerPair> getLongestPlayedPair() {
         List<Player> players = playersRepository.findAll();
-        List<Record> records = recordsRepository.findAll();
 
         List<Record> recordsPlayerOne;
         List<Record> recordsPlayerTwo;
@@ -59,8 +55,8 @@ public class PlayersService {
                     continue;
                 }
 
-                recordsPlayerOne = findRecords(playerOne, records);
-                recordsPlayerTwo = findRecords(playerTwo, records);
+                recordsPlayerOne = playerOne.getRecords();
+                recordsPlayerTwo = playerTwo.getRecords();
 
                 // get total time for the pair + all the matches they participated in together and their times
                 PlayerPair pair = totalTimePlayedWithMatches(playerOne, playerTwo, recordsPlayerOne, recordsPlayerTwo);
@@ -132,17 +128,5 @@ public class PlayersService {
             }
         }
         return new PlayerPair(playerOne, playerTwo, total, matches);
-    }
-
-    // Finds all the known records for the player
-    private List<Record> findRecords(Player player, List<Record> records) {
-        List<Record> recordsFound = new ArrayList<>();
-
-        for (Record recordTemp : records) {
-            if (player.getId() == recordTemp.getPlayer().getId()) {
-                recordsFound.add(recordTemp);
-            }
-        }
-        return recordsFound;
     }
 }

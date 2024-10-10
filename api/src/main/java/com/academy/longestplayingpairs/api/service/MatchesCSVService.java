@@ -4,10 +4,10 @@ import com.academy.longestplayingpairs.api.model.Match;
 import com.academy.longestplayingpairs.api.model.Team;
 import com.academy.longestplayingpairs.api.repository.MatchesRepository;
 import com.academy.longestplayingpairs.api.repository.TeamsRepository;
+import com.academy.longestplayingpairs.api.service.interfaces.CSVParser;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.time.LocalDate;
@@ -19,13 +19,16 @@ import java.util.regex.Pattern;
 // Service for parsing CSV files to the DB
 
 @Service
-public class MatchesCSVService {
+public class MatchesCSVService implements CSVParser {
 
     private final MatchesRepository matchesRepository;
     private final TeamsRepository teamsRepository;
     private final DateService dateService;
 
-    private final String PATH_MATCHES = "api/src/main/resources/upload-dir/matches.csv";
+//    private final String PATH_MATCHES = "api/src/main/resources/upload-dir/matches.csv";
+    private final String PATH_MATCHES = "api/src/main/resources/test/matches.csv";
+
+    private String dateFormatOption;
 
     public MatchesCSVService(MatchesRepository matchesRepository, TeamsRepository teamsRepository, DateService dateService) {
         this.matchesRepository = matchesRepository;
@@ -37,7 +40,14 @@ public class MatchesCSVService {
     // Uses pattern to check if the rows are correctly formated
     // Parses the date to LocalDate object
     // Returns list with warnings if a row is unsuccessfully parsed
-    public List<String> csvParse(String dateFormatOption) {
+
+    @Override
+    public void setDateFormatOption(String dateFormatOption) {
+        this.dateFormatOption = dateFormatOption;
+    }
+
+    @Override
+    public List<String> csvParse() {
         List<String> warnings = new ArrayList<>();
 
         try (BufferedReader reader = new BufferedReader(new FileReader(PATH_MATCHES))) {
@@ -64,7 +74,7 @@ public class MatchesCSVService {
                     } else {
                         String dateStr = matcher.group("date").trim();
 
-                        if (!dateService.isDateCorrect(dateFormatOption, dateStr)) {
+                        if (!dateService.isValidDateFormat(dateFormatOption, dateStr)) {
                             warnings.add("Date is not correct on line " + lineNum);
                             continue;
                         }
@@ -79,7 +89,14 @@ public class MatchesCSVService {
                         Team teamB = teamsRepository.findById(bTeamId).orElse(null);
 
                         if (teamA == null || teamB == null) {
-                            warnings.add("Line" + lineNum + ": Team with id " + aTeamId + " is not found in Matches. Skipping the line.");
+
+                            int teamId;
+                            if (teamA == null) {
+                                teamId = aTeamId;
+                            } else {
+                                teamId = bTeamId;
+                            }
+                            warnings.add("Line" + lineNum + ": Team with id " + teamId + " is not found in Matches.");
                             continue;
                         }
 
@@ -95,13 +112,11 @@ public class MatchesCSVService {
                         matchesRepository.save(match);
                     }
                 } else {
-                    warnings.add("Line " + lineNum + " in Matches isn't correct. Skipping the line.");
+                    warnings.add("Line " + lineNum + " in Matches isn't correct.");
                 }
             }
-        } catch (FileNotFoundException e) {
-            warnings.add("File matches.csv isn't found. Please upload it first!");
         } catch (IOException e) {
-            e.printStackTrace();
+            warnings.add("File matches.csv isn't found. Please upload it first!");
         }
         return warnings;
     }

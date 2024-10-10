@@ -5,10 +5,10 @@ import com.academy.longestplayingpairs.api.model.Team;
 import com.academy.longestplayingpairs.api.model.enums.PlayerPosition;
 import com.academy.longestplayingpairs.api.repository.PlayersRepository;
 import com.academy.longestplayingpairs.api.repository.TeamsRepository;
+import com.academy.longestplayingpairs.api.service.interfaces.CSVParser;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -19,12 +19,13 @@ import java.util.regex.Pattern;
 // Service for parsing CSV files to the DB
 
 @Service
-public class PlayersCSVService {
+public class PlayersCSVService implements CSVParser {
 
     PlayersRepository playersRepository;
     TeamsRepository teamsRepository;
 
-    private final String PATH_PLAYERS = "api/src/main/resources/upload-dir/players.csv";
+//    private final String PATH_PLAYERS = "api/src/main/resources/upload-dir/players.csv";
+    private final String PATH_PLAYERS = "api/src/main/resources/test/players.csv";
 
     public PlayersCSVService(PlayersRepository playersRepository, TeamsRepository teamsRepository) {
         this.playersRepository = playersRepository;
@@ -33,6 +34,8 @@ public class PlayersCSVService {
 
     // uses Pattern to validate the rows
     // Returns a list with warnings if a row is unsuccessfully parsed
+
+    @Override
     public List<String> csvParse() {
         List<String> warnings = new ArrayList<>();
 
@@ -57,34 +60,33 @@ public class PlayersCSVService {
 
                     if (playersRepository.existsById(id)) {
                         warnings.add("Player already exists in the table. Row" + lineNum);
+                        continue;
+                    }
+
+                    int number = Integer.parseInt(matcher.group("number"));
+                    String position = matcher.group("position");
+                    String name = matcher.group("name");
+                    int teamId = Integer.parseInt(matcher.group("teamid"));
+
+                    Player player = new Player();
+                    player.setTeamNumber(number);
+                    player.setPosition(PlayerPosition.valueOf(position));
+                    player.setFullName(name);
+
+                    Team team = teamsRepository.findById(teamId).orElse(null);
+
+                    if (team != null) {
+                        player.setTeam(team);
+                        playersRepository.save(player);
                     } else {
-                        int number = Integer.parseInt(matcher.group("number"));
-                        String position = matcher.group("position");
-                        String name = matcher.group("name");
-                        int teamId = Integer.parseInt(matcher.group("teamid"));
-
-                        Player player = new Player();
-                        player.setTeamNumber(number);
-                        player.setPosition(PlayerPosition.valueOf(position));
-                        player.setFullName(name);
-
-                        Team team = teamsRepository.findById(teamId).orElse(null);
-
-                        if (team != null) {
-                            player.setTeam(team);
-                            playersRepository.save(player);
-                        } else {
-                            warnings.add("Line " + lineNum + ": Team with id " + teamId + " is not found in Players. Skipping the line.");
-                        }
+                        warnings.add("Line " + lineNum + ": Team with id " + teamId + " is not found in Players.");
                     }
                 } else {
-                    warnings.add("Line " + lineNum + " in Players is not correct. Skipping the line.");
+                    warnings.add("Line " + lineNum + " in Players is not correct.");
                 }
             }
-        } catch (FileNotFoundException e) {
-            warnings.add("File players.csv isn't found. Please upload it first!");
         } catch (IOException e) {
-            e.printStackTrace();
+            warnings.add("File players.csv isn't found. Please upload it first!");
         }
         return warnings;
     }
